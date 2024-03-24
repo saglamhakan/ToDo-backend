@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum Status {
 
     NOT_COMPLETED(0),
-    COMPLETED(1);
+    WAITING(1),
+    COMPLETED(2);
 
     private final int code;
 
