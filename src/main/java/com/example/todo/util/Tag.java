@@ -5,12 +5,8 @@ import lombok.Getter;
 @Getter
 public enum Tag {
 
-    BUSINESS(1),
-    PERSONALITY(2);
+    BUSINESS,
+    PERSONALITY
 
-    private final int code;
 
-    Tag(int code) {
-        this.code = code;
-    }
 }

@@ -18,6 +18,6 @@ public class TodoRequest {
     private Preference preference;
     private LocalDateTime deliveryTime;
     private Long userId;
-    private String message;
+   // private String message;
 
 }

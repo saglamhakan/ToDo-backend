@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -23,15 +22,17 @@ public class ToDo {
     private Long id;
     private String name;
     private String description;
-                                            // @Enumerated(EnumType.STRING) bu kod enumları string olarak tutar ama gerek yok
+    @Enumerated(EnumType.STRING)
     private Status status;
+    @Enumerated(EnumType.STRING)
     private Tag tag;
+    @Enumerated(EnumType.STRING)
     private Preference preference;
     private LocalDateTime deliveryTime;
     private LocalDateTime dateTime;
     private String message;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonBackReference
     private User user;
 }

@@ -5,22 +5,24 @@ import com.example.todo.dto.response.ToDoResponse;
 import com.example.todo.dto.response.UserResponse;
 import com.example.todo.entity.ToDo;
 import com.example.todo.entity.User;
+import com.example.todo.exception.BusinessException;
 import com.example.todo.repository.ToDoRepository;
 import com.example.todo.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
 
-    private final ToDoRepository toDoRepository;
 
-    public UserService(UserRepository userRepository, ToDoRepository toDoRepository) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.toDoRepository = toDoRepository;
     }
 
     public List<UserResponse> getAll() {
@@ -41,7 +43,8 @@ public class UserService {
         return userResponses;
 
     }
-    public UserResponse create(UserRequest request){
+
+    public UserResponse create(UserRequest request) {
 
         User user = new User();
         user.setName(request.getName());
@@ -53,11 +56,39 @@ public class UserService {
 
     }
 
-    public UserResponse convertToToDoResponse(User user){
+    public void deleteById(Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user != null) {
+            userRepository.deleteById(id);
+        } else {
+            throw new BusinessException("User you wanted to delete was not found");
+        }
+    }
+
+
+    public UserResponse updateToDoFields(Long id, Map<String, Object> updates) {
+        User user = userRepository.findById(id).orElseThrow(() -> new BusinessException("Görev bulunamadı: " + id));
+
+        updates.forEach((key, value) -> {
+            Field field = ReflectionUtils.findField(User.class, key); //Todo nun içindeki fieldları buluyor
+            if (field != null) {
+                field.setAccessible(true);
+                ReflectionUtils.setField(field, user, value);
+
+            } else {
+                throw new BusinessException("Güncellenmek istenen alan bulunamadı: " + key);
+            }
+        });
+
+        User updatedUser = userRepository.save(user);
+        return convertToToDoResponse(updatedUser);
+    }
+
+
+    public UserResponse convertToToDoResponse(User user) {
         UserResponse response = new UserResponse();
         response.setName(user.getName());
         response.setEmail(user.getEmail());
-
 
         return response;
     }

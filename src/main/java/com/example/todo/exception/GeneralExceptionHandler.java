@@ -30,6 +30,7 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<?> BusinessExceptionHandler(BusinessException exception){
+        logger.error("Business exception: " + exception.getMessage());
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
 
     }
